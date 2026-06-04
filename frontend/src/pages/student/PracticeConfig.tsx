@@ -82,7 +82,7 @@ export const PracticeConfig: React.FC = () => {
             <select
               value={config.subject_id}
               onChange={(e) => setConfig(c => ({ ...c, subject_id: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             >
               <option value="">全部科目</option>
               {subjects.map(s => (
@@ -98,7 +98,7 @@ export const PracticeConfig: React.FC = () => {
             <select
               value={config.type}
               onChange={(e) => setConfig(c => ({ ...c, type: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             >
               <option value="">全部类型</option>
               {types.map(t => (
@@ -114,7 +114,7 @@ export const PracticeConfig: React.FC = () => {
             <select
               value={config.difficulty}
               onChange={(e) => setConfig(c => ({ ...c, difficulty: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             >
               <option value="">全部难度</option>
               {difficulties.map(d => (

@@ -152,7 +152,7 @@ def get_exam(id):
     result['actual_total_score'] = sum(q['score'] for q in questions_list)
     
     students = query_db('''
-        SELECT es.student_id, u.username, u.real_name
+        SELECT es.student_id as id, u.username, u.real_name
         FROM exam_students es 
         LEFT JOIN users u ON es.student_id = u.id 
         WHERE es.exam_id = ?
