@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 interface LayoutProps {
@@ -9,6 +9,7 @@ interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const handleLogout = () => {
     logout()
@@ -16,22 +17,36 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   const studentMenu = [
-    { path: '/', label: '首页', icon: '🏠' },
-    { path: '/questions', label: '题库浏览', icon: '📚' },
-    { path: '/exams', label: '我的考试', icon: '📝' },
-    { path: '/wrong-book', label: '错题本', icon: '❌' },
-    { path: '/scores', label: '成绩记录', icon: '📊' }
+    { path: '/', label: '首页', icon: '🏠', exact: true, extraPaths: [] },
+    { path: '/questions', label: '题库浏览', icon: '📚', exact: false, extraPaths: [] },
+    { path: '/exams', label: '我的考试', icon: '📝', exact: false, extraPaths: ['/exam/', '/exam-report/'] },
+    { path: '/wrong-book', label: '错题本', icon: '❌', exact: false, extraPaths: [] },
+    { path: '/scores', label: '成绩记录', icon: '📊', exact: false, extraPaths: [] }
   ]
 
   const adminMenu = [
-    { path: '/admin', label: '管理首页', icon: '📊' },
-    { path: '/admin/questions', label: '题库管理', icon: '📚' },
-    { path: '/admin/papers', label: '试卷管理', icon: '📄' },
-    { path: '/admin/exams', label: '考试管理', icon: '📝' },
-    { path: '/admin/statistics', label: '成绩统计', icon: '📈' }
+    { path: '/admin', label: '管理首页', icon: '📊', exact: true, extraPaths: [] },
+    { path: '/admin/questions', label: '题库管理', icon: '📚', exact: false, extraPaths: [] },
+    { path: '/admin/papers', label: '试卷管理', icon: '📄', exact: false, extraPaths: [] },
+    { path: '/admin/exams', label: '考试管理', icon: '📝', exact: false, extraPaths: [] },
+    { path: '/admin/statistics', label: '成绩统计', icon: '📈', exact: false, extraPaths: [] }
   ]
 
   const menu = isAdmin ? adminMenu : studentMenu
+
+  const isActive = (path: string, exact: boolean, extraPaths: string[] = []) => {
+    if (exact) {
+      if (location.pathname === path) return true
+    } else if (location.pathname.startsWith(path)) {
+      return true
+    }
+    for (const extra of extraPaths) {
+      if (location.pathname.startsWith(extra)) {
+        return true
+      }
+    }
+    return false
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -47,13 +62,21 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <ul className="space-y-1">
             {menu.map((item) => (
               <li key={item.path}>
-                <Link
+                <NavLink
                   to={item.path}
-                  className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  className={({ isActive: navActive }) => {
+                    const active = navActive || isActive(item.path, item.exact, item.extraPaths)
+                    return `flex items-center px-4 py-3 rounded-lg transition-colors ${
+                      active
+                        ? 'bg-blue-50 text-blue-600 font-medium'
+                        : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                    }`
+                  }}
+                  end={item.exact}
                 >
                   <span className="mr-3">{item.icon}</span>
                   {item.label}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>

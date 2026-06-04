@@ -47,11 +47,9 @@ const App: React.FC = () => {
         </ProtectedRoute>
       } />
       
-      <Route path="/exam/:examId" element={
+      <Route path="/exam/:examId/:attemptId" element={
         <ProtectedRoute>
-          <Layout>
-            <ExamPage />
-          </Layout>
+          <ExamPage />
         </ProtectedRoute>
       } />
       
