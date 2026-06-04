@@ -6,10 +6,7 @@ def get_db():
     if 'db' not in g:
         db_path = current_app.config['DATABASE']
         os.makedirs(os.path.dirname(db_path), exist_ok=True)
-        g.db = sqlite3.connect(
-            db_path,
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
+        g.db = sqlite3.connect(db_path)
         g.db.row_factory = sqlite3.Row
     return g.db
 

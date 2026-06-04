@@ -10,7 +10,7 @@ export const ExamPage: React.FC = () => {
   const [exam, setExam] = useState<ExamType | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
-  const [timeLeft, setTimeLeft] = useState(0)
+  const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
@@ -29,12 +29,13 @@ export const ExamPage: React.FC = () => {
   }, [examId, navigate])
 
   useEffect(() => {
+    if (timeLeft === null) return
     if (timeLeft <= 0) {
       handleSubmit()
       return
     }
     const timer = setInterval(() => {
-      setTimeLeft(t => t - 1)
+      setTimeLeft(t => (t !== null ? t - 1 : null))
     }, 1000)
     return () => clearInterval(timer)
   }, [timeLeft])
@@ -97,8 +98,8 @@ export const ExamPage: React.FC = () => {
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-500">剩余时间</p>
-                <p className={`font-mono font-bold text-xl ${timeLeft < 300 ? 'text-red-600' : 'text-gray-800'}`}>
-                  {formatTimeLeft(timeLeft)}
+                <p className={`font-mono font-bold text-xl ${timeLeft !== null && timeLeft < 300 ? 'text-red-600' : 'text-gray-800'}`}>
+                  {timeLeft !== null ? formatTimeLeft(timeLeft) : '--:--:--'}
                 </p>
               </div>
               <button
