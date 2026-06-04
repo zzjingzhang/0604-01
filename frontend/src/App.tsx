@@ -9,6 +9,9 @@ import { QuestionBank } from './pages/student/QuestionBank'
 import { ExamList } from './pages/student/ExamList'
 import { ExamPage } from './pages/student/ExamPage'
 import { ExamReport } from './pages/student/ExamReport'
+import { PracticeConfig } from './pages/student/PracticeConfig'
+import { PracticeExam } from './pages/student/PracticeExam'
+import { PracticeResult } from './pages/student/PracticeResult'
 import { WrongBook } from './pages/student/WrongBook'
 import { ScoreHistory } from './pages/student/ScoreHistory'
 import { AdminDashboard } from './pages/admin/Dashboard'
@@ -50,6 +53,26 @@ const App: React.FC = () => {
       <Route path="/exam/:examId/:attemptId" element={
         <ProtectedRoute>
           <ExamPage />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/practice" element={
+        <ProtectedRoute>
+          <Layout>
+            <PracticeConfig />
+          </Layout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/practice/exam" element={
+        <ProtectedRoute>
+          <PracticeExam />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/practice/result" element={
+        <ProtectedRoute>
+          <PracticeResult />
         </ProtectedRoute>
       } />
       

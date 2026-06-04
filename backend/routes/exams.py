@@ -446,3 +446,91 @@ def get_attempt(attempt_id):
     result['accuracy'] = round(total_correct / len(questions_list) * 100, 2) if questions_list else 0
     
     return jsonify(result)
+
+@bp.route('/practice/generate', methods=['POST'])
+@token_required
+def generate_practice():
+    data = request.get_json()
+    subject_id = data.get('subject_id')
+    q_type = data.get('type')
+    difficulty = data.get('difficulty')
+    count = int(data.get('count', 10))
+    
+    query = 'SELECT * FROM questions WHERE 1=1'
+    params = []
+    
+    if subject_id:
+        query += ' AND subject_id = ?'
+        params.append(subject_id)
+    if q_type:
+        query += ' AND type = ?'
+        params.append(q_type)
+    if difficulty:
+        query += ' AND difficulty = ?'
+        params.append(difficulty)
+    
+    query += ' ORDER BY RANDOM() LIMIT ?'
+    params.append(count)
+    
+    questions = query_db(query, params)
+    result = []
+    for q in questions:
+        q_dict = row_to_dict(q)
+        if q_dict['options']:
+            q_dict['options'] = json.loads(q_dict['options'])
+        result.append(q_dict)
+    
+    return jsonify({
+        'questions': result,
+        'total': len(result)
+    })
+
+@bp.route('/practice/submit', methods=['POST'])
+@token_required
+def submit_practice():
+    data = request.get_json()
+    answers = data.get('answers', {})
+    questions = data.get('questions', [])
+    
+    def check_answer(q_type, student_answer, correct_answer):
+        if student_answer is None or student_answer == '':
+            return False
+        if q_type == 'multiple':
+            student_sorted = ''.join(sorted(student_answer.upper()))
+            correct_sorted = ''.join(sorted(correct_answer.upper()))
+            return student_sorted == correct_sorted
+        else:
+            return student_answer.strip().upper() == correct_answer.strip().upper()
+    
+    result = []
+    correct_count = 0
+    total_score = 0
+    
+    for q in questions:
+        qid = q['id']
+        student_ans = answers.get(str(qid))
+        is_correct = check_answer(q['type'], student_ans, q['answer'])
+        score = q['score'] if is_correct else 0
+        
+        if is_correct:
+            correct_count += 1
+        total_score += score
+        
+        result.append({
+            'question_id': qid,
+            'student_answer': student_ans,
+            'correct_answer': q['answer'],
+            'is_correct': is_correct,
+            'score': score,
+            'max_score': q['score'],
+            'analysis': q.get('analysis', '')
+        })
+    
+    return jsonify({
+        'results': result,
+        'correct_count': correct_count,
+        'total_count': len(questions),
+        'total_score': total_score,
+        'max_score': sum(q['score'] for q in questions),
+        'accuracy': round(correct_count / len(questions) * 100, 2) if questions else 0
+    })

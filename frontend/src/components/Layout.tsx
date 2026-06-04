@@ -19,6 +19,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const studentMenu = [
     { path: '/', label: '首页', icon: '🏠', exact: true, extraPaths: [] },
     { path: '/questions', label: '题库浏览', icon: '📚', exact: false, extraPaths: [] },
+    { path: '/practice', label: '模拟考试', icon: '🎯', exact: false, extraPaths: ['/practice/exam', '/practice/result'] },
     { path: '/exams', label: '我的考试', icon: '📝', exact: false, extraPaths: ['/exam/', '/exam-report/'] },
     { path: '/wrong-book', label: '错题本', icon: '❌', exact: false, extraPaths: [] },
     { path: '/scores', label: '成绩记录', icon: '📊', exact: false, extraPaths: [] }

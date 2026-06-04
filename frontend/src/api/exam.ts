@@ -47,3 +47,26 @@ export const submitExam = (id: number, answers: Record<string, string>) => {
 export const getAttempt = (attemptId: number) => {
   return api.get<ExamAttemptDetail>(`/exams/attempt/${attemptId}`)
 }
+
+export const generatePractice = (data: {
+  subject_id?: number
+  type?: string
+  difficulty?: string
+  count?: number
+}) => {
+  return api.post<{ questions: any[]; total: number }>('/exams/practice/generate', data)
+}
+
+export const submitPractice = (data: {
+  answers: Record<string, string>
+  questions: any[]
+}) => {
+  return api.post<{
+    results: any[]
+    correct_count: number
+    total_count: number
+    total_score: number
+    max_score: number
+    accuracy: number
+  }>('/exams/practice/submit', data)
+}
